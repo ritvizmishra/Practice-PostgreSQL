@@ -350,5 +350,69 @@ WHERE status = 'active';
 
 ---
 
+### {Quick Note} Foreign Key Actions: 
+
+When defining **foreign key constraints**, PostgreSQL allows specifying what should happen to child table rows when parent table rows are updated or deleted. These options are added using `ON DELETE` or `ON UPDATE`.
+
+---
+
+#### Available Options
+
+##### 1. `CASCADE`
+- **Effect:** Automatically propagates changes (delete or update) from the parent to the child.
+- **Use Case:** If a parent row is deleted, its corresponding child rows should also be deleted.
+
+```sql
+ON DELETE CASCADE
+ON UPDATE CASCADE
+```
+
+##### 2. `SET NULL`
+- **Effect:** Sets the foreign key column in the child table to `NULL` when the parent row is deleted or updated.
+- **Use Case:** Use when losing the parent row shouldn't delete the child but just remove the relationship.
+
+```sql
+ON DELETE SET NULL
+```
+
+##### 3. `SET DEFAULT`
+- **Effect:** Sets the foreign key column to its default value when the parent row is deleted or updated.
+- **Note:** A default must be explicitly defined.
+
+```sql
+ON DELETE SET DEFAULT
+```
+
+##### 4. `RESTRICT`
+- **Effect:** Prevents deletion or update on the parent if any referencing child rows exist.
+- **Use Case:** Ensures parent rows can’t be removed while still in use.
+
+```sql
+ON DELETE RESTRICT
+```
+
+##### 5. `NO ACTION`
+- **Effect:** Similar to `RESTRICT`, but the check is deferred until the end of the statement.
+- **Default behavior** if nothing is specified.
+
+```sql
+ON DELETE NO ACTION
+```
+
+---
+
+#### Example:
+```sql
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customers(id) ON DELETE CASCADE
+);
+```
+This setup ensures that if a customer is deleted, all their orders will also be deleted.
+
+---
+
+
+
 
 
