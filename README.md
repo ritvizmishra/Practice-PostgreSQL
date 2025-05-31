@@ -412,6 +412,54 @@ This setup ensures that if a customer is deleted, all their orders will also be 
 
 ---
 
+### {Quick Note} Resetting SERIAL Primary Key Sequence
+
+Sometimes, the `SERIAL` primary key sequence might not start from 1 or may drift due to deletes or other operations.
+
+---
+
+#### Steps to Reset the Sequence
+
+##### 1. Identify the Sequence Name
+
+PostgreSQL automatically creates a sequence for `SERIAL` columns with the pattern:
+
+`<table>_<column>_seq`
+
+To get the exact sequence name, run:
+
+```sql
+SELECT pg_get_serial_sequence('product', 'id');
+```
+
+---
+
+##### 2. Reset the Sequence
+
+To restart the sequence at 1 (or any desired number), use:
+
+```sql
+ALTER SEQUENCE product_id_seq RESTART WITH 1;
+```
+
+---
+
+##### 3. Insert New Records
+
+After resetting, the next inserted row will use the restarted sequence value.
+
+```sql
+INSERT INTO product (type_id, name, supplier, description)
+VALUES (1, 'Example', 'Supplier', 'Desc');  -- id will be 1
+```
+
+---
+
+#### Important Notes
+
+- If existing rows have IDs that conflict with the reset sequence, you may get duplicate key errors.
+- Adjust or clean existing data accordingly before resetting.
+
 
 
 
