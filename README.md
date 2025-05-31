@@ -183,3 +183,109 @@ CREATE TABLE orders (
 #### Tip:
 Use `FOREIGN KEY` constraints to enforce referential integrity and prevent orphan records between related tables.
 
+---
+
+### Altering Column Data Types & When to Use `USING`
+
+#### Modifying a Column's Data Type
+To change the data type of a column in PostgreSQL:
+```sql
+ALTER TABLE table_name
+ALTER COLUMN column_name TYPE new_data_type;
+```
+
+#### When to Use `USING`
+You need to use `USING` when PostgreSQL **cannot automatically convert** the old type to the new one.
+
+**Example:** Changing `INTEGER` to `TEXT`:
+```sql
+ALTER TABLE products
+ALTER COLUMN price TYPE TEXT USING price::TEXT;
+```
+
+This tells PostgreSQL *how* to convert the data explicitly.
+
+#### When You Can Skip `USING`
+You can skip the `USING` clause if the types are **implicitly compatible** (e.g., `VARCHAR` to `TEXT`, `INT` to `BIGINT`).
+
+**Example:**
+```sql
+ALTER TABLE users
+ALTER COLUMN name TYPE TEXT;
+```
+No `USING` needed here because `VARCHAR` and `TEXT` are compatible.
+
+#### Best Practice
+Use `USING` when:
+- Changing between incompatible types
+- You want **explicit control** over how data is transformed
+
+Skip it when:
+- You're doing a safe change between compatible types
+- The conversion is automatic and lossless
+
+---
+
+### Creating Custom Data Types
+
+PostgreSQL supports creating **custom data types**, which is useful for enhancing schema clarity and enforcing strict constraints.
+
+#### 1. **Creating an Enum Type**
+Useful for fields with a fixed set of values (e.g., gender, status).
+```sql
+CREATE TYPE sex_type AS ENUM ('M', 'F', 'O');
+```
+
+**Usage:**
+```sql
+CREATE TABLE employee (
+  name VARCHAR(50),
+  sex sex_type
+);
+```
+
+---
+
+#### 2. **Creating a Composite Type**
+Good for structured data stored as a single column.
+```sql
+CREATE TYPE address AS (
+  street VARCHAR,
+  city VARCHAR,
+  zip INT
+);
+```
+
+**Usage:**
+```sql
+CREATE TABLE company (
+  name VARCHAR(100),
+  location address
+);
+```
+
+---
+
+#### 3. **Creating a Domain Type**
+Best for adding constraints to basic types (e.g., email format).
+```sql
+CREATE DOMAIN positive_int AS INT
+  CHECK (VALUE > 0);
+```
+
+**Usage:**
+```sql
+CREATE TABLE product (
+  id positive_int
+);
+```
+
+---
+
+#### When to Use Custom Types
+- To enforce consistent structure across multiple tables
+- To improve schema readability
+- To centralize validation logic (like `CHECK` constraints)
+
+
+
