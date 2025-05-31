@@ -1,4 +1,4 @@
-### PostgreSQL Data Types
+### {Quick Notes} PostgreSQL Data Types
 
 A categorized list of data types supported in PostgreSQL.
 
@@ -155,7 +155,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### PostgreSQL Foreign Key Usage – Quick Note
+### {Quick Notes} PostgreSQL Foreign Key Usage
 
 In **PostgreSQL**, the `FOREIGN KEY` keyword is used to define a foreign key constraint — it links a column (or columns) in one table to the primary key in another.
 
@@ -185,7 +185,7 @@ Use `FOREIGN KEY` constraints to enforce referential integrity and prevent orpha
 
 ---
 
-### Altering Column Data Types & When to Use `USING`
+### {Quick Notes} Altering Column Data Types & When to Use `USING`
 
 #### Modifying a Column's Data Type
 To change the data type of a column in PostgreSQL:
@@ -226,7 +226,7 @@ Skip it when:
 
 ---
 
-### Creating Custom Data Types
+### {Quick Notes} Creating Custom Data Types
 
 PostgreSQL supports creating **custom data types**, which is useful for enhancing schema clarity and enforcing strict constraints.
 
@@ -286,6 +286,69 @@ CREATE TABLE product (
 - To enforce consistent structure across multiple tables
 - To improve schema readability
 - To centralize validation logic (like `CHECK` constraints)
+
+--- 
+
+### {Quick Notes} Creating Indexes
+
+Indexes in PostgreSQL help speed up data retrieval operations by reducing the amount of data scanned.
+
+---
+
+#### Basic Index Creation
+```sql
+CREATE INDEX index_name
+ON table_name (column1, column2);  -- Can index one or more columns
+```
+
+**Example:**
+```sql
+CREATE INDEX idx_customer_last_name
+ON customer (last_name);
+```
+
+---
+
+#### Unique Index
+Ensures that values in the indexed column(s) are unique.
+```sql
+CREATE UNIQUE INDEX idx_email_unique
+ON users (email);
+```
+
+---
+
+#### Index with Expression
+You can create indexes on expressions, not just columns.
+```sql
+CREATE INDEX idx_lower_email
+ON users (LOWER(email));
+```
+
+---
+
+#### Partial Index
+Indexes only part of a table (rows meeting a condition).
+```sql
+CREATE INDEX idx_active_users
+ON users (last_login)
+WHERE status = 'active';
+```
+
+---
+
+#### When to Use Indexes
+- Columns frequently used in `WHERE`, `JOIN`, `ORDER BY`, or `GROUP BY`
+- To enforce uniqueness or quick lookups
+- For large tables where performance is key
+
+---
+
+#### Caution
+- Indexes use storage and slow down `INSERT`, `UPDATE`, `DELETE`
+- Don’t over-index — analyze query patterns first
+
+---
 
 
 
