@@ -1,10 +1,10 @@
-## PostgreSQL Data Types
+### PostgreSQL Data Types
 
 A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 1. Numeric Types
+#### 1. Numeric Types
 
 | Type              | Description                         |
 |-------------------|-------------------------------------|
@@ -20,7 +20,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 2. Character Types
+#### 2. Character Types
 
 | Type         | Description                          |
 |--------------|--------------------------------------|
@@ -30,7 +30,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 3. Date/Time Types
+#### 3. Date/Time Types
 
 | Type         | Description                            |
 |--------------|----------------------------------------|
@@ -43,7 +43,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 4. Boolean Type
+#### 4. Boolean Type
 
 | Type      | Description                    |
 |-----------|--------------------------------|
@@ -51,7 +51,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 5. Geometric Types
+#### 5. Geometric Types
 
 | Type      | Description                      |
 |-----------|----------------------------------|
@@ -65,7 +65,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 6. Network Types
+#### 6. Network Types
 
 | Type       | Description           |
 |------------|-----------------------|
@@ -76,7 +76,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 7. Text Search Types
+#### 7. Text Search Types
 
 | Type       | Description                          |
 |------------|--------------------------------------|
@@ -85,7 +85,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 8. JSON Types
+#### 8. JSON Types
 
 | Type   | Description                       |
 |--------|-----------------------------------|
@@ -94,7 +94,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 9. UUID
+#### 9. UUID
 
 | Type  | Description                  |
 |-------|------------------------------|
@@ -102,7 +102,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 10. Array Types
+#### 10. Array Types
 
 - Any base type can be made into an array using `[]`
   ```sql
@@ -110,7 +110,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 11. Range Types
+#### 11. Range Types
 
 | Type         | Description                     |
 |--------------|---------------------------------|
@@ -122,7 +122,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 12. Special Types
+#### 12. Special Types
 
 | Type             | Description                 |
 |------------------|-----------------------------|
@@ -134,7 +134,7 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 13. Custom/User-Defined Types
+#### 13. Custom/User-Defined Types
 
 | Type           | Description                               |
 |----------------|-------------------------------------------|
@@ -149,6 +149,37 @@ A categorized list of data types supported in PostgreSQL.
 
 ---
 
-### 🔗 References
+#### 🔗 References
 
 - [PostgreSQL Official Docs](https://www.postgresql.org/docs/current/datatype.html)
+
+---
+
+### PostgreSQL Foreign Key Usage – Quick Note
+
+In **PostgreSQL**, the `FOREIGN KEY` keyword is used to define a foreign key constraint — it links a column (or columns) in one table to the primary key in another.
+
+#### Common Syntax:
+
+**Inline (Column-level):**
+```sql
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES customer(id)
+);
+```
+
+**Table-level (More flexible):**
+```sql
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+```
+
+> Both are valid. Use **table-level** if you want to name the constraint or define actions like `ON DELETE CASCADE`, `ON UPDATE SET NULL`, etc.
+
+#### Tip:
+Use `FOREIGN KEY` constraints to enforce referential integrity and prevent orphan records between related tables.
+
