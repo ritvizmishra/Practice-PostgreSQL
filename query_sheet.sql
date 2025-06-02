@@ -54,9 +54,44 @@ SELECT product.name, item.size, item.color, item.price
 FROM product
 LEFT JOIN item ON product.id = item.product_id;
 
+-- Find out customer details with the respective salesperson:
+SELECT first_name, birth_date, city 
+FROM customer
+WHERE EXTRACT(MONTH FROM birth_date) = 09 
+UNION
+SELECT first_name, birth_date, city
+FROM sales_person
+WHERE EXTRACT(MONTH FROM birth_date) = 09;
 
+-- Find matching pattern:
+-- #1: starting with Ma
+SELECT first_name, last_name
+FROM customer
+WHERE last_name ~ '^Ma';
 
+-- #2: ending with ez
+SELECT first_name, last_name
+FROM customer
+WHERE last_name ~ 'ez$';
 
+-- #3: ending with ez or son
+SELECT first_name, last_name
+FROM customer
+WHERE last_name ~ 'ez|son';
+
+-- #4: contains w/x/y/z
+SELECT first_name, last_name
+FROM customer
+WHERE last_name ~ '[w-z]';
+
+-- Find the number of months in which more than 1 customer has a birthday:
+SELECT EXTRACT(MONTH FROM birth_date) AS month, COUNT(*) AS persons
+FROM customer
+GROUP BY month HAVING COUNT(*) > 1;
+
+-- Describe items on various parameters:
+SELECT COUNT(*) AS Items, SUM(price) AS Value, MAX(price) AS Max, MIN(price) AS Min, ROUND(AVG(price), 2) AS Average
+FROM item;
 
 
 
