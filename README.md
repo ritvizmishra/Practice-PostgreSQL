@@ -460,6 +460,70 @@ VALUES (1, 'Example', 'Supplier', 'Desc');  -- id will be 1
 - If existing rows have IDs that conflict with the reset sequence, you may get duplicate key errors.
 - Adjust or clean existing data accordingly before resetting.
 
+---
+
+### {Quick Note} Pattern Matching Cheat Sheet
+
+#### 1. `LIKE` Operator
+**Used for basic pattern matching with wildcards:**
+
+- `%` → matches any sequence of characters (including none)
+- `_` → matches a single character
+
+##### Examples:
+```sql
+-- Names starting with 'Ri'
+SELECT * FROM customer WHERE first_name LIKE 'Ri%';
+
+-- Names ending with 'a'
+SELECT * FROM customer WHERE first_name LIKE '%a';
+
+-- Case-insensitive search for 'emma'
+SELECT * FROM customer WHERE first_name ILIKE '%emma%';
+```
+
+---
+
+#### 2. `SIMILAR TO` Operator
+**Used for more complex pattern matching (SQL-standard regex style).**
+
+##### Key Features:
+- Supports regex elements like `|`, `[]`, `()`, etc.
+- More powerful than `LIKE`, but slower
+
+##### Examples:
+```sql
+-- First names starting with A or J
+SELECT * FROM customer WHERE first_name SIMILAR TO '(A|J)%';
+
+-- First names ending in 'n' or 'z'
+SELECT * FROM customer WHERE first_name SIMILAR TO '%(n|z)';
+```
+
+---
+
+#### 3. Regex Matching (`~`, `~*`, `!~`, `!~*`)
+- `~`   → case-sensitive regex match
+- `~*`  → case-insensitive regex match
+- `!~`  → case-sensitive regex NOT match
+- `!~*` → case-insensitive regex NOT match
+
+##### Example:
+```sql
+-- First names containing digits (unlikely but shows usage)
+SELECT * FROM customer WHERE first_name ~ '\d';
+```
+
+---
+
+#### Recommendation:
+- Use `LIKE`/`ILIKE` for simple patterns
+- Use `SIMILAR TO` if you need alternation or character groups
+- Use `~`/`~*` for full regex capabilities
+
+---
+
+
 
 
 
