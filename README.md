@@ -523,6 +523,77 @@ SELECT * FROM customer WHERE first_name ~ '\d';
 
 ---
 
+### {Quick Note} PostgreSQL Views
+
+#### What is a View?
+A **view** in PostgreSQL is a **virtual table** based on the result of a SQL query. It doesn't store data physically but lets you query data as if it were a real table.
+
+> "A saved SELECT query that you can reuse like a table."
+
+---
+
+#### Analogy:
+Imagine you often join two tables (like `customer` and `sales_order`). Instead of repeating the join every time, you create a view — a shortcut that always returns that join.
+
+---
+
+#### Creating a View
+```sql
+CREATE VIEW customer_orders AS
+SELECT c.first_name, c.last_name, s.purchase_order_num
+FROM customer c
+JOIN sales_order s ON c.id = s.customer_id;
+```
+
+Now you can use:
+```sql
+SELECT * FROM customer_orders;
+```
+
+---
+
+#### Benefits of Views
+| Reason                 | Benefit                          |
+|------------------------|----------------------------------|
+| Simplify queries       | Avoid writing complex joins      |
+| Security               | Hide sensitive columns           |
+| Reusability            | Use same logic in many places    |
+| Abstraction            | Present clean, business-ready data |
+
+---
+
+#### Types of Views
+
+##### 1. **Regular View**
+- Defined with `CREATE VIEW`
+- Acts like a virtual table
+- Sometimes updatable (if query is simple)
+
+##### 2. **Materialized View**
+- Stores data physically
+- Better for performance on heavy queries
+- Needs manual refresh
+
+```sql
+CREATE MATERIALIZED VIEW top_customers AS
+SELECT customer_id, COUNT(*) AS order_count
+FROM sales_order
+GROUP BY customer_id;
+
+-- To refresh manually:
+REFRESH MATERIALIZED VIEW top_customers;
+```
+
+---
+
+#### Notes:
+- Most views are **read-only** unless PostgreSQL can map the updates to base tables
+- Materialized views do not update automatically
+
+---
+
+
+
 
 
 
