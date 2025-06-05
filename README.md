@@ -592,6 +592,62 @@ REFRESH MATERIALIZED VIEW top_customers;
 
 ---
 
+### {Quick Notes} NATURAL JOIN in PostgreSQL
+
+A **NATURAL JOIN** in PostgreSQL automatically joins tables using all columns with the same name and compatible data types.
+
+#### Table Definitions
+```sql
+-- Table 1: student
+CREATE TABLE student (
+  student_id INT,
+  name VARCHAR(50)
+);
+
+-- Table 2: marks
+CREATE TABLE marks (
+  student_id INT,
+  subject VARCHAR(20),
+  score INT
+);
+```
+
+#### Sample Data
+```sql
+-- Insert data into student
+INSERT INTO student (student_id, name) VALUES
+(1, 'Ritviz'),
+(2, 'Abhinav');
+
+-- Insert data into marks
+INSERT INTO marks (student_id, subject, score) VALUES
+(1, 'Math', 95),
+(1, 'Science', 88),
+(2, 'Math', 91);
+```
+
+#### NATURAL JOIN Example
+```sql
+SELECT *
+FROM student
+NATURAL JOIN marks;
+```
+
+#### Output Explanation
+The query joins both tables using the **`student_id`** column (since it's common in both tables). The result looks like this:
+
+| student_id | name     | subject | score |
+|------------|----------|---------|-------|
+| 1          | Ritviz   | Math    | 95    |
+| 1          | Ritviz   | Science | 88    |
+| 2          | Abhinav  | Math    | 91    |
+
+#### Notes
+- If no common column is found, it returns a **Cartesian product**.
+- If multiple columns match, it uses **all of them** to join.
+- Use `JOIN ... ON` for more control.
+
+
 
 
 
