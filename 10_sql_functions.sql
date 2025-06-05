@@ -1,4 +1,5 @@
 -- SQL FUNCTIONS:
+
 CREATE OR REPLACE FUNCTION fn_add_ints(int, int) 
 RETURNS int AS
 $body$
