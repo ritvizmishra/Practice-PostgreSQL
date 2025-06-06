@@ -647,6 +647,163 @@ The query joins both tables using the **`student_id`** column (since it's common
 - If multiple columns match, it uses **all of them** to join.
 - Use `JOIN ... ON` for more control.
 
+---
+
+
+### {Quick Note} Function Parameter Modes: `IN`, `OUT`, and `INOUT`
+
+In PostgreSQL, function parameters can have different **modes** that control how data flows **into** and **out of** a function.
+
+---
+
+#### 1. `IN` (Default)
+- Input-only parameter
+- Value is passed **into** the function
+- **Cannot be modified or returned** unless included in `RETURN`
+
+```sql
+CREATE FUNCTION greet(name TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    RETURN 'Hello, ' || name || '!';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT greet('Ritviz');  -- Output: Hello, Ritviz!
+```
+
+---
+
+#### 2. `OUT`
+- Output-only parameter
+- **Not passed** during the function call
+- The function **assigns** a value to it and returns it
+
+```sql
+CREATE FUNCTION get_year(out current_year INT)
+AS $$
+BEGIN
+    current_year := EXTRACT(YEAR FROM CURRENT_DATE);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM get_year();  -- Output: current_year = 2025
+```
+
+---
+
+#### 3. `INOUT`
+- Acts as both **input** and **output**
+- Value is passed in and can be **modified** and returned
+
+```sql
+CREATE FUNCTION double_num(INOUT num INT)
+AS $$
+BEGIN
+    num := num * 2;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT double_num(4);  -- Output: 8
+```
+
+---
+
+#### Summary Table
+
+| Mode   | Passed in? | Modified? | Returned? |
+|--------|------------|-----------|-----------|
+| `IN`   | ✅         | ❌        | ✅ (via RETURN) |
+| `OUT`  | ❌         | ✅        | ✅         |
+| `INOUT`| ✅         | ✅        | ✅         |
+
+---
+
+
+### {Quick Note} `RETURN QUERY` in Functions
+
+In PL/pgSQL, `RETURN QUERY` is used inside a function to return the **result of a `SELECT` statement directly**. It's especially useful for:
+
+- Functions returning **multiple rows**
+- Functions using `RETURNS TABLE(...)` or `RETURNS SETOF ...`
+
+---
+
+#### Syntax
+
+```sql
+RETURN QUERY SELECT ...;
+```
+
+You can use multiple `RETURN QUERY` statements to accumulate rows from different queries.
+
+---
+
+#### Example 1: Using `RETURNS TABLE`
+
+```sql
+CREATE FUNCTION get_top_students()
+RETURNS TABLE(name TEXT, marks INT)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT student_name, student_marks
+    FROM students
+    WHERE student_marks > 90;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM get_top_students();
+```
+
+This returns a table with `name` and `marks` for students scoring above 90.
+
+---
+
+#### Example 2: Using with `SETOF TYPE`
+
+```sql
+-- Define a custom type
+CREATE TYPE emp_info AS (
+    name TEXT,
+    salary NUMERIC
+);
+```
+
+```sql
+-- Use RETURN QUERY with SETOF
+CREATE FUNCTION high_salary_emps()
+RETURNS SETOF emp_info
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT emp_name, emp_salary
+    FROM employees
+    WHERE emp_salary > 100000;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM high_salary_emps();
+```
+
+---
+
+#### Summary Table
+
+| Keyword        | Description                                  |
+|----------------|----------------------------------------------|
+| `RETURN`       | Return a single value or row                 |
+| `RETURN NEXT`  | Add one row to result (used in loops)        |
+| `RETURN QUERY` | Return results of a full query (multi-row)   |
+
+---
+
+
 
 
 
