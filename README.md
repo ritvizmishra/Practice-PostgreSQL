@@ -647,6 +647,82 @@ The query joins both tables using the **`student_id`** column (since it's common
 - If multiple columns match, it uses **all of them** to join.
 - Use `JOIN ... ON` for more control.
 
+---
+
+
+### {Quick Note} Function Parameter Modes: `IN`, `OUT`, and `INOUT`
+
+In PostgreSQL, function parameters can have different **modes** that control how data flows **into** and **out of** a function.
+
+---
+
+#### 1. `IN` (Default)
+- Input-only parameter
+- Value is passed **into** the function
+- **Cannot be modified or returned** unless included in `RETURN`
+
+```sql
+CREATE FUNCTION greet(name TEXT)
+RETURNS TEXT AS $$
+BEGIN
+    RETURN 'Hello, ' || name || '!';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT greet('Ritviz');  -- Output: Hello, Ritviz!
+```
+
+---
+
+#### 2. `OUT`
+- Output-only parameter
+- **Not passed** during the function call
+- The function **assigns** a value to it and returns it
+
+```sql
+CREATE FUNCTION get_year(out current_year INT)
+AS $$
+BEGIN
+    current_year := EXTRACT(YEAR FROM CURRENT_DATE);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM get_year();  -- Output: current_year = 2025
+```
+
+---
+
+#### 3. `INOUT`
+- Acts as both **input** and **output**
+- Value is passed in and can be **modified** and returned
+
+```sql
+CREATE FUNCTION double_num(INOUT num INT)
+AS $$
+BEGIN
+    num := num * 2;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT double_num(4);  -- Output: 8
+```
+
+---
+
+#### Summary Table
+
+| Mode   | Passed in? | Modified? | Returned? |
+|--------|------------|-----------|-----------|
+| `IN`   | ✅         | ❌        | ✅ (via RETURN) |
+| `OUT`  | ❌         | ✅        | ✅         |
+| `INOUT`| ✅         | ✅        | ✅         |
+
+---
+
+
 
 
 
