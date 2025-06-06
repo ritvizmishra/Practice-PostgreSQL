@@ -723,6 +723,87 @@ SELECT double_num(4);  -- Output: 8
 ---
 
 
+### {Quick Note} `RETURN QUERY` in Functions
+
+In PL/pgSQL, `RETURN QUERY` is used inside a function to return the **result of a `SELECT` statement directly**. It's especially useful for:
+
+- Functions returning **multiple rows**
+- Functions using `RETURNS TABLE(...)` or `RETURNS SETOF ...`
+
+---
+
+#### Syntax
+
+```sql
+RETURN QUERY SELECT ...;
+```
+
+You can use multiple `RETURN QUERY` statements to accumulate rows from different queries.
+
+---
+
+#### Example 1: Using `RETURNS TABLE`
+
+```sql
+CREATE FUNCTION get_top_students()
+RETURNS TABLE(name TEXT, marks INT)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT student_name, student_marks
+    FROM students
+    WHERE student_marks > 90;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM get_top_students();
+```
+
+This returns a table with `name` and `marks` for students scoring above 90.
+
+---
+
+#### Example 2: Using with `SETOF TYPE`
+
+```sql
+-- Define a custom type
+CREATE TYPE emp_info AS (
+    name TEXT,
+    salary NUMERIC
+);
+```
+
+```sql
+-- Use RETURN QUERY with SETOF
+CREATE FUNCTION high_salary_emps()
+RETURNS SETOF emp_info
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT emp_name, emp_salary
+    FROM employees
+    WHERE emp_salary > 100000;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Usage
+SELECT * FROM high_salary_emps();
+```
+
+---
+
+#### Summary Table
+
+| Keyword        | Description                                  |
+|----------------|----------------------------------------------|
+| `RETURN`       | Return a single value or row                 |
+| `RETURN NEXT`  | Add one row to result (used in loops)        |
+| `RETURN QUERY` | Return results of a full query (multi-row)   |
+
+---
+
+
 
 
 
