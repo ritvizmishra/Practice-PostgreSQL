@@ -803,6 +803,76 @@ SELECT * FROM high_salary_emps();
 
 ---
 
+### {Quick Note} Cursors in PostgreSQL
+
+#### What are Cursors?
+
+Cursors in PostgreSQL are used to **retrieve query results one row at a time**, rather than fetching the entire result set at once.
+
+They're helpful when:
+- You're dealing with **large datasets**.
+- You need to **process rows one-by-one** in a loop.
+- You're working within a **PL/pgSQL function or DO block**.
+
+---
+
+#### Steps to Use a Cursor
+
+##### 1. Declare
+```sql
+DECLARE my_cursor CURSOR FOR
+SELECT * FROM employees WHERE department = 'Sales';
+```
+
+##### 2. Open (optional inside functions)
+```sql
+OPEN my_cursor;
+```
+
+##### 3. Fetch
+```sql
+FETCH NEXT FROM my_cursor;
+-- or FETCH n ROWS FROM my_cursor;
+```
+
+##### 4. Loop Through Rows
+```sql
+LOOP
+    FETCH my_cursor INTO emp_record;
+    EXIT WHEN NOT FOUND;
+    -- process emp_record
+END LOOP;
+```
+
+##### 5. Close
+```sql
+CLOSE my_cursor;
+```
+
+---
+
+##### Example in PL/pgSQL
+```sql
+DO $$
+DECLARE
+    emp_record RECORD;
+    emp_cursor CURSOR FOR SELECT employee_id, name FROM employees;
+BEGIN
+    OPEN emp_cursor;
+    LOOP
+        FETCH emp_cursor INTO emp_record;
+        EXIT WHEN NOT FOUND;
+        RAISE NOTICE 'Employee: %, %', emp_record.employee_id, emp_record.name;
+    END LOOP;
+    CLOSE emp_cursor;
+END $$;
+```
+
+---
+
+##### Notes
+- Cursors are often used **inside procedures and functions**.
+- If you want simpler syntax, you can also use a `FOR record_var IN cursor_query LOOP` structure.
 
 
 
