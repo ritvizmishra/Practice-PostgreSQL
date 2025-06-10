@@ -1,3 +1,21 @@
+### Table of Contents
+- [PostgreSQL Data Types](#quick-notes-postgresql-data-types)
+- [Foreign Key Usage](#quick-notes-postgresql-foreign-key-usage)
+- [Altering Column Data Types & USING](#quick-notes-altering-column-data-types--when-to-use-using)
+- [Creating Custom Data Types](#quick-notes-creating-custom-data-types)
+- [Creating Indexes](#quick-notes-creating-indexes)
+- [Foreign Key Actions](#quick-note-foreign-key-actions)
+- [Resetting SERIAL Primary Key Sequence](#quick-note-resetting-serial-primary-key-sequence)
+- [Pattern Matching Cheat Sheet](#quick-note-pattern-matching-cheat-sheet)
+- [PostgreSQL Views](#quick-note-postgresql-views)
+- [NATURAL JOIN in PostgreSQL](#quick-notes-natural-join-in-postgresql)
+- [Function Parameter Modes: IN, OUT, INOUT](#quick-note-function-parameter-modes-in-out-and-inout)
+- [RETURN QUERY in Functions](#quick-note-return-query-in-functions)
+- [Cursors in PostgreSQL](#quick-note-cursors-in-postgresql)
+- [FORMAT() Specifiers & Placeholders](#quick-note-postgresql-format-function--format-specifiers--placeholders)
+
+---
+
 ### {Quick Notes} PostgreSQL Data Types
 
 A categorized list of data types supported in PostgreSQL.
