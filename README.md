@@ -874,6 +874,69 @@ END $$;
 - Cursors are often used **inside procedures and functions**.
 - If you want simpler syntax, you can also use a `FOR record_var IN cursor_query LOOP` structure.
 
+---
+
+### {Quick Note} PostgreSQL FORMAT() Function – Format Specifiers & Placeholders
+
+The `FORMAT()` function in PostgreSQL works similarly to `printf`-style formatting in languages like C or Python. It's used to dynamically build strings by substituting placeholders with actual values.
+
+---
+
+#### Basic Syntax
+
+```sql
+FORMAT('template string with %s, %I, %L', value1, value2, value3)
+```
+
+---
+
+#### Common Format Specifiers
+
+| Specifier | Description                                         | Example Output                        |
+|-----------|-----------------------------------------------------|----------------------------------------|
+| `%s`      | Formats as a **string**                             | `'Hello %s' → Hello Ritviz`            |
+| `%I`      | Formats as a **SQL identifier** (e.g., column name) | `'SELECT * FROM %I' → SELECT * FROM users` |
+| `%L`      | Formats as a **literal** (adds quotes)              | `'WHERE name = %L' → WHERE name = 'Ritviz'` |
+| `%%`      | Escapes a literal `%` symbol                        | `'Progress: 90%%' → Progress: 90%`     |
+
+---
+
+#### Examples
+
+##### 1. `%s` – String
+```sql
+SELECT FORMAT('Hello, %s!', 'Ritviz');
+-- Output: Hello, Ritviz!
+```
+
+##### 2. `%I` – Identifier
+```sql
+SELECT FORMAT('SELECT * FROM %I;', 'my_table');
+-- Output: SELECT * FROM my_table;
+```
+
+##### 3. `%L` – Literal
+```sql
+SELECT FORMAT('WHERE name = %L;', 'John');
+-- Output: WHERE name = 'John';
+```
+
+##### 4. `%%` – Literal Percent Symbol
+```sql
+SELECT FORMAT('Completed: 100%%');
+-- Output: Completed: 100%
+```
+
+---
+
+#### Notes
+
+- Specifiers must match the correct data type.
+- Using `%` alone (without a valid specifier like `%s`) will result in an error.
+- Use `%I` and `%L` especially when dynamically constructing SQL queries for safety and readability.
+
+---
+
 
 
 
