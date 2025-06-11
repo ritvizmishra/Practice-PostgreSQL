@@ -1,3 +1,21 @@
+### Table of Contents
+- [PostgreSQL Data Types](#quick-notes-postgresql-data-types)
+- [Foreign Key Usage](#quick-notes-postgresql-foreign-key-usage)
+- [Altering Column Data Types & USING](#quick-notes-altering-column-data-types--when-to-use-using)
+- [Creating Custom Data Types](#quick-notes-creating-custom-data-types)
+- [Creating Indexes](#quick-notes-creating-indexes)
+- [Foreign Key Actions](#quick-note-foreign-key-actions)
+- [Resetting SERIAL Primary Key Sequence](#quick-note-resetting-serial-primary-key-sequence)
+- [Pattern Matching Cheat Sheet](#quick-note-pattern-matching-cheat-sheet)
+- [PostgreSQL Views](#quick-note-postgresql-views)
+- [NATURAL JOIN in PostgreSQL](#quick-notes-natural-join-in-postgresql)
+- [Function Parameter Modes: IN, OUT, INOUT](#quick-note-function-parameter-modes-in-out-and-inout)
+- [RETURN QUERY in Functions](#quick-note-return-query-in-functions)
+- [Cursors in PostgreSQL](#quick-note-cursors-in-postgresql)
+- [FORMAT() Specifiers & Placeholders](#quick-note-postgresql-format-function--format-specifiers--placeholders)
+
+---
+
 ### {Quick Notes} PostgreSQL Data Types
 
 A categorized list of data types supported in PostgreSQL.
@@ -803,6 +821,139 @@ SELECT * FROM high_salary_emps();
 
 ---
 
+### {Quick Note} Cursors in PostgreSQL
+
+#### What are Cursors?
+
+Cursors in PostgreSQL are used to **retrieve query results one row at a time**, rather than fetching the entire result set at once.
+
+They're helpful when:
+- You're dealing with **large datasets**.
+- You need to **process rows one-by-one** in a loop.
+- You're working within a **PL/pgSQL function or DO block**.
+
+---
+
+#### Steps to Use a Cursor
+
+##### 1. Declare
+```sql
+DECLARE my_cursor CURSOR FOR
+SELECT * FROM employees WHERE department = 'Sales';
+```
+
+##### 2. Open (optional inside functions)
+```sql
+OPEN my_cursor;
+```
+
+##### 3. Fetch
+```sql
+FETCH NEXT FROM my_cursor;
+-- or FETCH n ROWS FROM my_cursor;
+```
+
+##### 4. Loop Through Rows
+```sql
+LOOP
+    FETCH my_cursor INTO emp_record;
+    EXIT WHEN NOT FOUND;
+    -- process emp_record
+END LOOP;
+```
+
+##### 5. Close
+```sql
+CLOSE my_cursor;
+```
+
+---
+
+##### Example in PL/pgSQL
+```sql
+DO $$
+DECLARE
+    emp_record RECORD;
+    emp_cursor CURSOR FOR SELECT employee_id, name FROM employees;
+BEGIN
+    OPEN emp_cursor;
+    LOOP
+        FETCH emp_cursor INTO emp_record;
+        EXIT WHEN NOT FOUND;
+        RAISE NOTICE 'Employee: %, %', emp_record.employee_id, emp_record.name;
+    END LOOP;
+    CLOSE emp_cursor;
+END $$;
+```
+
+---
+
+##### Notes
+- Cursors are often used **inside procedures and functions**.
+- If you want simpler syntax, you can also use a `FOR record_var IN cursor_query LOOP` structure.
+
+---
+
+### {Quick Note} PostgreSQL FORMAT() Function – Format Specifiers & Placeholders
+
+The `FORMAT()` function in PostgreSQL works similarly to `printf`-style formatting in languages like C or Python. It's used to dynamically build strings by substituting placeholders with actual values.
+
+---
+
+#### Basic Syntax
+
+```sql
+FORMAT('template string with %s, %I, %L', value1, value2, value3)
+```
+
+---
+
+#### Common Format Specifiers
+
+| Specifier | Description                                         | Example Output                        |
+|-----------|-----------------------------------------------------|----------------------------------------|
+| `%s`      | Formats as a **string**                             | `'Hello %s' → Hello Ritviz`            |
+| `%I`      | Formats as a **SQL identifier** (e.g., column name) | `'SELECT * FROM %I' → SELECT * FROM users` |
+| `%L`      | Formats as a **literal** (adds quotes)              | `'WHERE name = %L' → WHERE name = 'Ritviz'` |
+| `%%`      | Escapes a literal `%` symbol                        | `'Progress: 90%%' → Progress: 90%`     |
+
+---
+
+#### Examples
+
+##### 1. `%s` – String
+```sql
+SELECT FORMAT('Hello, %s!', 'Ritviz');
+-- Output: Hello, Ritviz!
+```
+
+##### 2. `%I` – Identifier
+```sql
+SELECT FORMAT('SELECT * FROM %I;', 'my_table');
+-- Output: SELECT * FROM my_table;
+```
+
+##### 3. `%L` – Literal
+```sql
+SELECT FORMAT('WHERE name = %L;', 'John');
+-- Output: WHERE name = 'John';
+```
+
+##### 4. `%%` – Literal Percent Symbol
+```sql
+SELECT FORMAT('Completed: 100%%');
+-- Output: Completed: 100%
+```
+
+---
+
+#### Notes
+
+- Specifiers must match the correct data type.
+- Using `%` alone (without a valid specifier like `%s`) will result in an error.
+- Use `%I` and `%L` especially when dynamically constructing SQL queries for safety and readability.
+
+---
 
 
 
